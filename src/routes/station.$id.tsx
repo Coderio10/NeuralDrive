@@ -3,7 +3,6 @@ import { ArrowLeft, Clock, Flag, MapPin, Navigation, Plug, Star, Zap } from "luc
 import { getStation, type Port, type Review } from "@/data/stations";
 import { StatusBadge } from "@/components/charge/StatusBadge";
 import { cn } from "@/lib/utils";
-import { directionsUrl } from "@/lib/charge-utils";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/station/$id")({
@@ -94,14 +93,16 @@ function StationPage() {
                 >
                   <Flag className="h-3.5 w-3.5" /> Report issue
                 </button>
-                <a
-                  href={directionsUrl(station)}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  to="/"
+                  onClick={() => {
+                    window.localStorage.setItem("navigate-to-station", station.id);
+                    window.dispatchEvent(new CustomEvent("navigate-to-station", { detail: { id: station.id } }));
+                  }}
                   className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-3.5 py-2 text-xs font-semibold text-primary-foreground shadow-[var(--shadow-glow)] hover:brightness-105"
                 >
                   <Navigation className="h-3.5 w-3.5" /> Directions
-                </a>
+                </Link>
               </div>
             </div>
           </div>

@@ -3,7 +3,6 @@ import { ArrowUpRight, Clock, Navigation, Plug, Zap } from "lucide-react";
 import type { Station } from "@/data/stations";
 import { StatusBadge } from "./StatusBadge";
 import { cn } from "@/lib/utils";
-import { directionsUrl } from "@/lib/charge-utils";
 
 export function StationCard({
   station,
@@ -68,15 +67,18 @@ export function StationCard({
         >
           View details <ArrowUpRight className="h-3 w-3" />
         </Link>
-        <a
-          href={directionsUrl(station)}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={(e) => e.stopPropagation()}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onSelect?.(station.id);
+            // dispatch in-app navigation event so MapView can fetch and show route
+            window.dispatchEvent(new CustomEvent("navigate-to-station", { detail: { id: station.id } }));
+          }}
           className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-[11px] font-semibold text-primary-foreground shadow-[var(--shadow-glow)] transition group-hover:brightness-105"
         >
           <Navigation className="h-3 w-3" /> Directions
-        </a>
+        </button>
       </div>
     </div>
   );
