@@ -8,7 +8,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
-      { title: "Driver Dashboard — ChargeNG" },
+      { title: "Driver Dashboard — Neural Drive" },
       { name: "description", content: "Your charging history, savings and saved stations." },
     ],
   }),

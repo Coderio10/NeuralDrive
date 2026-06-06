@@ -5,7 +5,7 @@ import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxi
 export const Route = createFileRoute("/insights")({
   head: () => ({
     meta: [
-      { title: "Market Insights — ChargeNG" },
+      { title: "Market Insights — Neural Drive" },
       { name: "description", content: "Charging demand intelligence across Nigerian cities." },
     ],
   }),
