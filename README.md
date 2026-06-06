@@ -1,19 +1,19 @@
 <div align="center">
 
 ```
- ██████╗██╗  ██╗ █████╗ ██████╗  ██████╗ ███████╗███╗   ██╗ ██████╗ 
-██╔════╝██║  ██║██╔══██╗██╔══██╗██╔════╝ ██╔════╝████╗  ██║██╔════╝ 
-██║     ███████║███████║██████╔╝██║  ███╗█████╗  ██╔██╗ ██║██║  ███╗
-██║     ██╔══██║██╔══██║██╔══██╗██║   ██║██╔══╝  ██║╚██╗██║██║   ██║
-╚██████╗██║  ██║██║  ██║██║  ██║╚██████╔╝███████╗██║ ╚████║╚██████╔╝
- ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═══╝ ╚═════╝ 
+ ███╗   ██╗███████╗██╗   ██╗██████╗  █████╗ ██╗     ██████╗ ██████╗ ██╗██╗   ██╗███████╗
+████╗  ██║██╔════╝██║   ██║██╔══██╗██╔══██╗██║     ██╔══██╗██╔══██╗██║██║   ██║██╔════╝
+██╔██╗ ██║█████╗  ██║   ██║██████╔╝███████║██║     ██║  ██║██████╔╝██║██║   ██║█████╗  
+██║╚██╗██║██╔══╝  ██║   ██║██╔══██╗██╔══██║██║     ██║  ██║██╔══██╗██║╚██╗ ██╔╝██╔══╝  
+██║ ╚████║███████╗╚██████╔╝██║  ██║██║  ██║███████╗██████╔╝██║  ██║██║ ╚████╔╝███████╗
+╚═╝  ╚═══╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝ ╚══════╝
 ```
 
-# ChargEng — Nigeria EV Charging Intelligence Platform
+# neuraldrive — Nigeria EV Charging Intelligence Platform
 
 **A cloud-native, AI-powered platform that provides real-time visibility into Nigeria's electric vehicle charging infrastructure — built for drivers, fleet operators, investors, and policymakers.**
 
-[![Build Status](https://img.shields.io/github/actions/workflow/status/Emmy1223/chargeng/deploy.yml?branch=main&style=flat-square&color=00E5FF&label=build)](https://github.com/Emmy1223/chargeng/actions)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/Emmy1223/neuraldrive/deploy.yml?branch=main&style=flat-square&color=00E5FF&label=build)](https://github.com/Emmy1223/neuraldrive/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-B2FF59.svg?style=flat-square)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-96.9%25-3178C6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 [![Built with Lovable](https://img.shields.io/badge/Built%20with-Lovable-FF6D00?style=flat-square)](https://lovable.dev)
@@ -46,7 +46,7 @@
 
 ## Overview
 
-ChargEng is Nigeria's first unified EV charging intelligence layer. It aggregates charging station data from multiple operators across Lagos, Abuja, and Port Harcourt into a single cloud-native platform — giving every stakeholder in the EV ecosystem the visibility they need to make informed decisions.
+neuraldrive is Nigeria's first unified EV charging intelligence layer. It aggregates charging station data from multiple operators across Lagos, Abuja, and Port Harcourt into a single cloud-native platform — giving every stakeholder in the EV ecosystem the visibility they need to make informed decisions.
 
 The platform answers questions that currently have no answers in the Nigerian EV space:
 
@@ -84,7 +84,7 @@ The result: inefficient infrastructure, poor EV adoption, and billions in misall
 
 ## Our Solution
 
-ChargEng provides a **three-layer intelligence platform**:
+neuraldrive provides a **three-layer intelligence platform**:
 
 ### Layer 1 — Driver Interface
 A real-time map showing every charging station in the network with live availability status, connector types, wait time estimates, and one-tap navigation.
@@ -103,8 +103,8 @@ An AI-powered demand forecasting and gap analysis tool that identifies underserv
 
 | Environment | URL | Status |
 |---|---|---|
-| Production | `https://chargeng.vercel.app` | 🔄 Deploying |
-| Staging | `https://chargeng-staging.vercel.app` | 🔄 Deploying |
+| Production | `https://neuraldrive.vercel.app` | 🔄 Deploying |
+| Staging | `https://neuraldrive-staging.vercel.app` | 🔄 Deploying |
 
 ---
 
@@ -284,8 +284,8 @@ Make sure you have the following installed:
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/Emmy1223/chargeng.git
-cd chargeng
+git clone https://github.com/Emmy1223/neuraldrive.git
+cd neuraldrive
 ```
 
 ### Frontend Setup
@@ -368,7 +368,7 @@ VITE_SOCKET_URL=http://localhost:3001
 ### Backend (.env)
 
 ```env
-DATABASE_URL=postgresql://user:password@localhost:5432/chargeng
+DATABASE_URL=postgresql://user:password@localhost:5432/neuraldrive
 REDIS_URL=redis://localhost:6379
 JWT_SECRET=your_super_secret_jwt_key
 PORT=3001
@@ -376,7 +376,7 @@ NODE_ENV=development
 AWS_ACCESS_KEY_ID=your_aws_access_key
 AWS_SECRET_ACCESS_KEY=your_aws_secret_key
 AWS_REGION=us-east-1
-S3_BUCKET_NAME=chargeng-platform
+S3_BUCKET_NAME=neuraldrive-platform
 AI_FORECAST_URL=http://localhost:8000
 ```
 
@@ -385,7 +385,7 @@ AI_FORECAST_URL=http://localhost:8000
 ## Project Structure
 
 ```
-chargeng/
+neuraldrive/
 │
 ├── NeuralDrive/                  # Frontend application
 │   ├── src/
@@ -542,7 +542,7 @@ GET /forecast?stationId=clx1234abcd&hoursAhead=24
 
 ### AWS Services Used
 
-**S3 Bucket (`chargeng-platform`)**
+**S3 Bucket (`neuraldrive-platform`)**
 - Stores exported analytics reports (CSV and PDF)
 - Static website hosting for frontend (fallback)
 - Pre-signed URLs generated by the backend for secure downloads
@@ -578,7 +578,7 @@ Every push to `main` triggers:
 1. **Install** — `npm install --legacy-peer-deps`
 2. **Lint** — `npm run lint`
 3. **Build** — `npm run build`
-4. **Deploy Frontend** — `aws s3 sync ./dist s3://chargeng-platform --delete`
+4. **Deploy Frontend** — `aws s3 sync ./dist s3://neuraldrive-platform --delete`
 5. **Invalidate CDN** — `aws cloudfront create-invalidation --paths "/*"`
 6. **Redeploy Backend** — triggers Railway webhook
 
