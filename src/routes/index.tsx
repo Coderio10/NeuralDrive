@@ -10,9 +10,9 @@ import { StationCard } from "@/components/charge/StationCard";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "ChargeNG — Find EV Chargers in Nigeria" },
+      { title: "Neural Drive — Find EV Chargers in Nigeria" },
       { name: "description", content: "Live map of EV charging stations across Lagos, Abuja, Port Harcourt and Ibadan." },
-      { property: "og:title", content: "ChargeNG — Find EV Chargers in Nigeria" },
+      { property: "og:title", content: "Neural Drive — Find EV Chargers in Nigeria" },
       { property: "og:description", content: "Live map of EV charging stations across Nigeria." },
     ],
   }),

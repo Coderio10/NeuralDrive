@@ -9,7 +9,7 @@ export function Logo({ compact = false }: { compact?: boolean }) {
       {!compact && (
         <div className="leading-tight">
           <div className="text-base font-semibold tracking-tight text-foreground">
-            ChargeNG
+            Neural Drive
           </div>
           <div className="text-[11px] text-muted-foreground">Power Your Journey</div>
         </div>
