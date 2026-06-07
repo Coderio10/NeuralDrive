@@ -9,11 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as MapRouteImport } from './routes/map'
 import { Route as InsightsRouteImport } from './routes/insights'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StationIdRouteImport } from './routes/station.$id'
 
+const MapRoute = MapRouteImport.update({
+  id: '/map',
+  path: '/map',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InsightsRoute = InsightsRouteImport.update({
   id: '/insights',
   path: '/insights',
@@ -39,12 +45,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/insights': typeof InsightsRoute
+  '/map': typeof MapRoute
   '/station/$id': typeof StationIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/insights': typeof InsightsRoute
+  '/map': typeof MapRoute
   '/station/$id': typeof StationIdRoute
 }
 export interface FileRoutesById {
@@ -52,25 +60,34 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/insights': typeof InsightsRoute
+  '/map': typeof MapRoute
   '/station/$id': typeof StationIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/insights' | '/station/$id'
+  fullPaths: '/' | '/dashboard' | '/insights' | '/map' | '/station/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/insights' | '/station/$id'
-  id: '__root__' | '/' | '/dashboard' | '/insights' | '/station/$id'
+  to: '/' | '/dashboard' | '/insights' | '/map' | '/station/$id'
+  id: '__root__' | '/' | '/dashboard' | '/insights' | '/map' | '/station/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   InsightsRoute: typeof InsightsRoute
+  MapRoute: typeof MapRoute
   StationIdRoute: typeof StationIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/map': {
+      id: '/map'
+      path: '/map'
+      fullPath: '/map'
+      preLoaderRoute: typeof MapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/insights': {
       id: '/insights'
       path: '/insights'
@@ -106,6 +123,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   InsightsRoute: InsightsRoute,
+  MapRoute: MapRoute,
   StationIdRoute: StationIdRoute,
 }
 export const routeTree = rootRouteImport
