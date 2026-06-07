@@ -2,8 +2,17 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Battery, Bookmark, Leaf, Wallet, Zap } from "lucide-react";
 import { stations } from "@/data/stations";
 import { StatusBadge } from "@/components/charge/StatusBadge";
-import { useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
+
+import {
+  formatMs,
+  getStoredSessionStats,
+  getStoredUser,
+  setStoredSessionStats,
+  setStoredUser,
+} from "@/lib/user-preferences";
+
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -28,31 +37,155 @@ function Dashboard() {
   const sessionsRef = useRef<HTMLDivElement>(null);
   const [showAll, setShowAll] = useState(false);
   const [threshold, setThreshold] = useState(20);
+
+  const [userName, setUserName] = useState<string>("Driver");
+  
   const totals = sessions.reduce(
     (a, s) => ({ kwh: a.kwh + s.kwh, cost: a.cost + s.cost }),
     { kwh: 0, cost: 0 },
   );
+
   const visibleSessions = showAll ? sessions : sessions.slice(0, 3);
+
+  // --- Usage tracking (total time spent on platform) ---
+  const [sessionStats, setSessionStats] = useState(() => getStoredSessionStats());
+
+  useEffect(() => {
+    // user name prompt (one-time)
+    const stored = getStoredUser();
+    if (stored?.name) {
+      setUserName(stored.name);
+    } else {
+
+      // One-time prompt: only if user hasn't been asked before.
+      // We keep this very simple: ask immediately on first dashboard load.
+      const val = window.prompt("What is your name?");
+      const name = (val ?? "").trim();
+      if (name) {
+        const newUser = { name, createdAt: Date.now() };
+        setStoredUser(newUser);
+        setUserName(name);
+      }
+      // (kept for backward-compat if referenced elsewhere)
+      // setStoredNameAsked(true);
+      // If you add persisted prompt tracking, wire it up here.
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    }
+
+    // start timing when dashboard mounts
+    const now = Date.now();
+    const existing = getStoredSessionStats();
+    const next: { totalMs: number; activeSince: number | null } = {
+      totalMs: existing.totalMs,
+      activeSince: existing.activeSince ?? now,
+    };
+    setStoredSessionStats(next);
+    setSessionStats(next);
+
+    const onVisibility = () => {
+      const docHidden = document.visibilityState === "hidden";
+      const tickNow = Date.now();
+
+      setSessionStats((prev) => {
+        const prevActiveSince = prev.activeSince;
+        if (!prevActiveSince) return prev;
+
+        if (docHidden) {
+          const delta = Math.max(0, tickNow - prevActiveSince);
+          const updated = {
+            totalMs: prev.totalMs + delta,
+            activeSince: null,
+          };
+          setStoredSessionStats(updated);
+          return updated;
+        }
+
+        // when coming back, re-start active timer
+        if (prev.activeSince === null) {
+          const updated = {
+            totalMs: prev.totalMs,
+            activeSince: tickNow,
+          };
+          setStoredSessionStats(updated);
+          return updated;
+        }
+
+        return prev;
+      });
+    };
+
+    document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("beforeunload", onVisibility);
+
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("beforeunload", onVisibility);
+    };
+  }, []);
+
+  // total + current
+  const totalActiveMs = useMemo(() => {
+    if (!sessionStats.activeSince) return sessionStats.totalMs;
+    return sessionStats.totalMs + Math.max(0, Date.now() - sessionStats.activeSince);
+  }, [sessionStats]);
+
+  const usageLabel = useMemo(() => formatMs(totalActiveMs), [totalActiveMs]);
 
   return (
     <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-10">
-        <Link to="/" className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground"
+        >
           <ArrowLeft className="h-4 w-4" /> Back to map
         </Link>
 
         <div className="mt-4 flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Welcome back, Ada</h1>
+            <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Welcome back, {userName}</h1>
             <p className="mt-1 text-sm text-muted-foreground">Your charging activity at a glance.</p>
           </div>
         </div>
 
         <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <Stat icon={Zap} label="Total charges" value={String(sessions.length * 7)} hint="this year" />
-          <Stat icon={Battery} label="kWh consumed" value={`${totals.kwh * 7}`} hint="≈ 6,400 km driven" />
-          <Stat icon={Leaf} label="CO₂ saved" value={`${(totals.kwh * 7 * 0.42).toFixed(0)} kg`} hint="vs petrol equivalent" />
-          <Stat icon={Wallet} label="Money spent" value={`₦${(totals.cost * 7).toLocaleString()}`} hint="all-time" />
+          <Stat
+            icon={Zap}
+            label="Total charges"
+            value={String(sessions.length * 7)}
+            hint="this year"
+          />
+          <Stat
+            icon={Battery}
+            label="kWh consumed"
+            value={`${totals.kwh * 7}`}
+            hint="≈ 6,400 km driven"
+          />
+          <Stat
+            icon={Leaf}
+            label="CO₂ saved"
+            value={`${(totals.kwh * 7 * 0.42).toFixed(0)} kg`}
+            hint="vs petrol equivalent"
+          />
+          <Stat
+            icon={Wallet}
+            label="Money spent"
+            value={`₦${(totals.cost * 7).toLocaleString()}`}
+            hint="all-time"
+          />
+        </div>
+
+        <div className="mt-4 rounded-3xl bg-card p-6 shadow-[var(--shadow-soft)]">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <h2 className="text-base font-semibold">Your platform time</h2>
+              <p className="mt-1 text-xs text-muted-foreground">How long you’ve used Neural Drive this session history.</p>
+            </div>
+            <div className="text-right">
+              <div className="text-2xl font-semibold tracking-tight text-foreground">{usageLabel}</div>
+              <div className="mt-1 text-[11px] text-muted-foreground">tracked locally in your browser</div>
+            </div>
+          </div>
         </div>
 
         <div className="mt-6 grid gap-4 lg:grid-cols-3">
@@ -63,7 +196,10 @@ function Dashboard() {
                 type="button"
                 onClick={() => {
                   setShowAll((v) => !v);
-                  setTimeout(() => sessionsRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" }), 50);
+                  setTimeout(() =>
+                    sessionsRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" }),
+                    50,
+                  );
                 }}
                 className="text-xs font-medium text-primary hover:underline"
               >
@@ -78,7 +214,9 @@ function Dashboard() {
                     <div className="text-xs text-muted-foreground">{s.date} · {s.duration}</div>
                   </div>
                   <div className="flex items-center gap-6 text-xs">
-                    <div className="text-muted-foreground"><span className="font-semibold text-foreground">{s.kwh}</span> kWh</div>
+                    <div className="text-muted-foreground">
+                      <span className="font-semibold text-foreground">{s.kwh}</span> kWh
+                    </div>
                     <div className="w-20 text-right font-semibold text-foreground">
                       {s.cost === 0 ? "Free" : `₦${s.cost.toLocaleString()}`}
                     </div>
@@ -90,7 +228,9 @@ function Dashboard() {
 
           <section className="rounded-3xl bg-card p-6 shadow-[var(--shadow-soft)]">
             <h2 className="text-base font-semibold">Battery reminder</h2>
-            <p className="mt-1 text-xs text-muted-foreground">Get suggestions when battery drops below your threshold.</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Get suggestions when battery drops below your threshold.
+            </p>
             <BatteryDial value={threshold} />
             <input
               type="range"
@@ -131,7 +271,9 @@ function Dashboard() {
               >
                 <StatusBadge status={s.status} />
                 <div className="mt-2 text-sm font-semibold">{s.name}</div>
-                <div className="mt-0.5 text-xs text-muted-foreground">{s.operator} · {s.city}</div>
+                <div className="mt-0.5 text-xs text-muted-foreground">
+                  {s.operator} · {s.city}
+                </div>
               </Link>
             ))}
           </div>
@@ -140,6 +282,7 @@ function Dashboard() {
     </div>
   );
 }
+
 
 function Stat({
   icon: Icon,

@@ -442,9 +442,11 @@ export function MapView({
       if (total <= 0) return;
 
       if (traveled >= total) {
-        setVehiclePos(pathPoints[pathPoints.length - 1]);
-        const final = pathPoints[pathPoints.length - 2] ?? pathPoints[pathPoints.length - 1];
+        // pathPoints is legacy percent coords: Array<[x,y]>.
+        // vehiclePos expects {x,y}
         const lastPoint = pathPoints[pathPoints.length - 1];
+        setVehiclePos({ x: lastPoint[0], y: lastPoint[1] });
+        const final = pathPoints[pathPoints.length - 2] ?? lastPoint;
         const angle = Math.atan2(lastPoint[1] - final[1], lastPoint[0] - final[0]) * (180 / Math.PI);
         setVehicleHeading(angle);
 
