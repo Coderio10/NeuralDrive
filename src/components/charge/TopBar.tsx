@@ -3,25 +3,26 @@ import { Bell, ChevronDown, LayoutDashboard, LineChart, Map } from "lucide-react
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
-export type City = "Lagos" | "Abuja" | "Port Harcourt" | "Ibadan";
+export type Country = "Nigeria";
 export type ViewMode = "map" | "list";
 
-const cities: City[] = ["Lagos", "Abuja", "Port Harcourt", "Ibadan"];
+const countries: Country[] = ["Nigeria"];
 
 export function TopBar({
-  city,
-  onCityChange,
+  country,
+  onCountryChange,
   view,
   onViewChange,
   onSignIn,
 }: {
-  city: City;
-  onCityChange: (c: City) => void;
+  country: Country;
+  onCountryChange: (c: Country) => void;
   view: ViewMode;
   onViewChange: (v: ViewMode) => void;
   onSignIn: () => void;
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+
   const navItems = [
     { to: "/", label: "Map", icon: Map },
     { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -33,12 +34,14 @@ export function TopBar({
       <div className="flex items-center gap-2">
         <div className="relative">
           <select
-            value={city}
-            onChange={(e) => onCityChange(e.target.value as City)}
+            value={country}
+            onChange={(e) => onCountryChange(e.target.value as Country)}
             className="h-9 cursor-pointer appearance-none rounded-xl border border-border bg-muted/40 pl-3 pr-8 text-sm font-medium text-foreground outline-none transition focus:ring-2 focus:ring-primary/30"
           >
-            {cities.map((c) => (
-              <option key={c} value={c}>{c}</option>
+            {countries.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
             ))}
           </select>
           <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />

@@ -18,6 +18,9 @@ type RouteMode = "driving" | "walking" | "cycling";
 
 type City = keyof typeof cityCenters;
 
+type Country = "Nigeria";
+
+
 function formatDistance(meters: number) {
   if (meters >= 1000) return `${(meters / 1000).toFixed(1)} km`;
   return `${Math.round(meters)} m`;
@@ -61,12 +64,16 @@ const statusStroke: Record<Station["status"], string> = {
 export function MapView({
   stations,
   city,
+  country,
+
   activeId,
   onSelect,
   onHover,
 }: {
   stations: Station[];
   city: City;
+  country: Country;
+
   activeId: string | null;
   onSelect: (id: string) => void;
   onHover: (id: string | null) => void;
@@ -491,7 +498,7 @@ export function MapView({
       {/* overlays above tiles */}
       {/* City label */}
       <div className="absolute left-5 top-5 z-[999] inline-flex items-center gap-2 rounded-full bg-card/90 px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-[var(--shadow-soft)] backdrop-blur">
-        <MapPin className="h-3.5 w-3.5 text-primary" /> {city}, Nigeria
+        <MapPin className="h-3.5 w-3.5 text-primary" /> {country}, Nigeria
       </div>
 
       {/* Active station floating card */}
